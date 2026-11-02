@@ -1,0 +1,53 @@
+# Assignment Submission
+
+## Contents
+| File | Task |
+|---|---|
+| `process-user.ts` | Fixed TypeScript function handling optional user/age |
+| `UserProfile.tsx` | Reviewed React component with all issues fixed |
+| `unpaid-bills.sql` | Query for homes with more than 10000 unpaid |
+
+## Key decisions
+- React: used AbortController to prevent race conditions and stale updates
+- React: stored `onFetch` in a ref to avoid an infinite refetch loop
+- SQL: grouped by `id` and `name` so homes with the same name stay separate
+
+## Edge cases handled
+- Network and HTTP errors (non-2xx responses)
+- Rapid `userId` changes and unmounting mid-request
+- Missing `user` or `age` in `processUser`
+
+
+# Question 1 
+function processUser(user?: { name: string; age?: number }) {
+   const formattedAge = user.age.toFixed(2);
+   console.log(user.name + ' is ' + formattedAge + ' years old');
+ }
+ processUser();
+# Solution in Process.ts
+
+# Question 2 
+ import React, { useState, useEffect } from 'react';
+ interface UserProps { userId: string; onFetch: (data: any) => void; }
+ export const UserProfile: React.FC<UserProps> = ({ userId, onFetch }) => {
+   const [user, setUser] = useState();
+   useEffect(() => {
+    fetch('/api/user/' + userId)
+       .then((res) => res.json())
+       .then((data) => {
+         setUser(data);
+        onFetch(data);
+      });
+  }, [userId, onFetch]);
+  return <div>{user ? user.name : 'Loading...'}</div>;
+ };
+
+# Solution in UserProfile.tsx
+
+# Question 3 
+homes(id, name)
+bills(id, home_id, amount, due_date, paid_at)  -- paid_at is NULL while the bill is unpaid
+
+Write one SQL query that returns each home's name and its total unpaid amount. Include only homes with more than 10000 unpaid. Sort by the highest total first.
+
+# Solution in UnpaidBill.SQL
